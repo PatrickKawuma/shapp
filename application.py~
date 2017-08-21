@@ -1,3 +1,5 @@
+print "imported app"
+
 __author__ = 'patrick'
 
 from models.models import User, ShoppingList, SHOPPING_LISTS, USERS
