@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<form id="form2" class="" method="post">
+
+					<div class="col-sm-3">
+      <label for="itemname">Item Name</label> <input type="text" name="itemname" value="{{ item.name }}"/>&nbsp;
+      <label for="quantity">Quantity</label> <input type="text" name="quantity" value="{{ item.quantity }}"/>&nbsp;
+      <label for="price">Price</label> <input type="text" name="price" value="{{ item.price }}"/>&nbsp;
+ 					</div>
+					<button type="submit" value="submit" class="btn btn-primary">Save Update</button>
+</form>
+
+{% endblock %}

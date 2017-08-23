@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form id="form1" class="" method="get">
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+
+			<div class="box-header">
+	
+			</div>
+			<div class="box-content">
+
+				<table class="table table-bordered table-striped table-hover table-heading table-datatable" id="datatable-1">
+					<thead>
+                                                <tr>
+<div>
+					<div class="col-sm-3">
+      <input type="text" name="searchitem" placeholder="check for item "/>&nbsp;
+      <button type="submit" value="submit" class="btn btn-success">Search</button>
+ 					</div>
+					<div class="col-sm-9">
+
+</div>                                       
+                                                </tr>
+						<tr>
+							<th>item</th>
+							<th>quantity</th>
+							<th>price</th>
+
+						</tr>
+					</thead>
+					<tbody>
+					{% if items %}
+						{% for item in items %}
+						<tr>
+							<td>{{ item.name }}</td>
+							<td>{{ item.quantity }} &nbsp;&nbsp; <a href="#"></a></td>
+							<td>{{ item.price }} &nbsp;&nbsp;<a href="#"></a></td>
+                                                        <td><a href="{{ url_for('edit_item', item_id = item.id)}}"> change</a> &nbsp; &nbsp;
+							    <a href="{{ url_for('delete_item', item_id = item.id)}}"> remove</a>
+							</td>
+						</tr>
+ 						{% endfor %}
+					{% endif %}
+
+		                        </tbody>
+	                       </table>
+               		</div>    
+	     
+		</form>
+
+<form id="form2" class="" method="post">
+
+					<div class="col-sm-3">
+      <input type="text" name="itemname" placeholder="item to include... "/>&nbsp;
+      <input type="text" name="quantity" placeholder="quantity"/>&nbsp;
+      <input type="text" name="price" placeholder="price per unit"/>&nbsp;
+      <input type="hidden" name="list_id" value="{{ list_id }}">
+ 					</div>
+					<button type="submit" value="submit" class="btn btn-primary">Add item</button>
+</form>
+
+
+{% endblock %}
