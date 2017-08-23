@@ -1,7 +1,9 @@
 __author__ = 'patrick'
+import os
+#path = os.path.dirname(os.path.abspath(__file__))
 
 
-from models.models import db, User, ShoppingList, Item#, SHOPPING_LISTS, USERS
+from models.models import db, User, ShoppingList, Item #, SHOPPING_LISTS, USERS
 from flask import Flask, render_template, request, session, url_for, redirect, jsonify, abort, make_response
 import json
 
@@ -147,52 +149,52 @@ lists = [
     }
 ]
 
-@app.route('/lists', methods=['GET'])
+@app.route('/shoppinglists', methods=['GET'])
 def get_lists():
-    print("in lists api")
     user = User.get_user('patrifire@yahoo.com')
-    lists = user.view_lists()
-    print(lists)
-    
-    #list_json = json.dumps([row._asdict() for row in lists])
+    lists = user.serialize_lists()
     return jsonify({'lists': lists})
 
 
-@app.route('/lists/<int:list_id>', methods=['GET'])
-def get_items(list_id):
-    print("in unique list")
+@app.route('/shoppinglists/<int:list_id>', methods=['GET'])
+def get_list(list_id):
     user = User.get_user('patrifire@yahoo.com')
-    slist = user.view_lists(list_id)
+    slist = user.serialize_lists(list_id)
     if slist:
         return jsonify({'list': slist})
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-
-@app.route('/lists', methods=['POST'])
-def create_list():
-    print("in Post")
+@app.route('/shoppinglists/<int:list_id>/items', methods=['GET'])
+def get_items(list_id):
+    print("in get items for a list")
     user = User.get_user('patrifire@yahoo.com')
-    print(type(user))
+    slist = ShoppingList.get_list(list_id)
+    if slist:
+        return jsonify({'items':slist.serialize_items()}) 
+    return make_response(jsonify({'error': 'Not found'}), 400)
+
+
+@app.route('/shoppinglists', methods=['POST'])
+def create_list():
+    user = User.get_user('patrifire@yahoo.com')
     if not request.json or not ('name' and 'budget') in request.json:
         abort(400)
 
-    slist = {
-        #'id': lists[-1]['id'] + 1,
-        'name': request.json['name'],
-        'budget': request.json.get('budget', ""),
-    }
-    name = slist['name']
-    budget = int(slist['budget'])
-    new_list = user.create_list(name, budget)
+    name = request.json['name']
+    budget = request.json.get('budget', "")
+
+    new_list = user.create_list(name, int(budget))
     new_list.create_in_db()
     return jsonify({'list': new_list.json_dump()}, 201)
 
 
-@app.route('/lists/<int:list_id>', methods=['PUT'])
+
+
+@app.route('/shoppinglists/<int:list_id>', methods=['PUT'])
 def edit_list(list_id):
     print("in put")
-    shoplist = [slist for slist in lists if slist['id'] == list_id]
+    shoplist = ShoppingList.get_list(list_id)
     if len(slist) == 0:
         abort(404)
 
@@ -214,7 +216,7 @@ def edit_list(list_id):
     return jsonify({'task': shoplist[0]})
 
 
-@app.route('/lists/<int:task_id>', methods=['DELETE'])
+@app.route('/shoppinglists/<int:list_id>', methods=['DELETE'])
 def delete_task(list_id):
     shoplist = [slist for slist in lists if slist['id'] == list_id]
     if len(slist) == 0:
@@ -222,7 +224,48 @@ def delete_task(list_id):
     lists.remove(shoplist[0])
     return jsonify({'result': True})
 
+@app.route('/shoppinglists/<int:list_id>/items', methods=['POST'])
+def get_items(list_id):
+    if not request.json or not ('name' and 'quantity' and 'price') in request.json:
+        abort(400)
+    user = User.get_user('patrifire@yahoo.com')
+    slist = ShoppingList.get_list(list_id)
+    if slist:
+        name = request.json['name']
+        quantity = request.json['quantity']
+        price = request.json['price']
 
+        slist.add_item(name, quantity, price)
+        return jsonify({'items':slist.serialize_items()}) 
+    return make_response(jsonify({'error': 'List Not found'}), 400)
+
+
+@app.route('/shoppinglists/<int:list_id>/items/<int:item_id>', methods=['PUT'])
+def get_items(list_id, item_id):
+    if not request.json or not ('name' or 'quantity' or 'price') in request.json:
+        abort(400)
+    user = User.get_user('patrifire@yahoo.com')
+    slist = ShoppingList.get_list(list_id)
+    if slist:
+        item = Item.get_item(item_id)
+        if item:
+            name = request.json['name']
+            quantity = request.json['quantity']
+            price = request.json['price']
+
+            item.name = name
+            item.quantity = quantity
+            item.price = price
+            item.create_in_db()
+
+            return make_response(jsonify({'success': 'Item update'}))
+        return make_response(jsonify({'error': 'Item not found'}))
+    return make_response(jsonify({'error': 'List Not found'}), 400)
+
+
+
+
+'''
 def make_public_list(slist):
     new_list = {}
     for field in slist:
@@ -231,9 +274,8 @@ def make_public_list(slist):
         else:
             new_list[field] = slist[field]
     return new_list
+'''
 
-
-#print(lists)
 
 POSTGRES = {
     'user': 'postgres',

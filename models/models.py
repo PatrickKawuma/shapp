@@ -33,17 +33,7 @@ class BaseModel(db.Model):
             for column, value in self._to_dict().items()
         }
     '''
-'''
-class Item(BaseModel, db.Model):
-    """Model for items"""
-    __tablename__ = 'items'
-    __table_args__ = {"schema":"flask"}
 
-    name = db.Column(db.String(50))
-    quantity = db.Column(db.Float)
-    price = db.Column(db.Float)
-    #list_id = db.Column(db.Integer, db.ForeignKey('list.id'))
-'''
 
 class User(BaseModel, db.Model):
     """Model for user table"""
@@ -80,7 +70,6 @@ class User(BaseModel, db.Model):
 
     @classmethod
     def get_user(cls, user_name):
-        #for user_object in USERS:
         user = User.query.filter_by(username=user_name).first()
         #if user_object.username == username:
         if user:
@@ -91,7 +80,6 @@ class User(BaseModel, db.Model):
 
     @staticmethod
     def login_valid(username_field, password_field):
-        #for user in USERS:
         user = User.query.filter_by(username=username_field).first()
             #user_exists = user.get_user(username_field)
         if user:
@@ -109,7 +97,6 @@ class User(BaseModel, db.Model):
         if user is None:
             new_user = cls(username, password)
             new_user.create_in_db()
-            #USERS.append(new_user)
             session['username'] = username
             new_user.login(new_user.username)
             return True
@@ -124,8 +111,7 @@ class User(BaseModel, db.Model):
         return ShoppingList(list_name, budget, self.id)
 
 
-    def view_lists(self, list_id=None):
-        #return [x for x in SHOPPING_LISTS if x.user_id == self.id]
+    def serialize_lists(self, list_id=None):
         lists = ShoppingList.query.all()
         if list_id:
             slist = ShoppingList.query.get(list_id)
@@ -133,12 +119,6 @@ class User(BaseModel, db.Model):
                 return slist.json_dump()
             return None
         return [l.json_dump() for l in lists]
-
-
-    def remove_list(self, list_nam):
-        for list_object in SHOPPING_LISTS:
-            if list_object.name == list_name and list_object.user_id == self.user_id:
-                SHOPPING_LISTS.remove(list_object)
 
 
     def add_item(self, item_name, quantity, shopping_list):
@@ -176,6 +156,7 @@ class ShoppingList(BaseModel, db.Model):
     def create_in_db(self):
         db.session.add(self)
         db.session.commit()
+        return True
 
 
     def json_dump(self):
@@ -186,16 +167,27 @@ class ShoppingList(BaseModel, db.Model):
                     user_id=self.user_id
                    )
 
+
+    def get_items(self):
+        items = Item.query.filter_by(list_id=self.id)
+        return items
+
+
+    def serialize_items(self):
+        items = self.get_items()
+        data = [item.json_dump() for item in items]
+        return data
+
     
     def add_item(self, item_name, quantity, price):
         item = Item(item_name, price, self, quantity)
         print(item.list_id)
         item.create_in_db()
 
-
+    '''
     def remove_item(self, item_name):
         del self.items[item_name]
-
+    '''
 
     @classmethod
     def get_list(cls, list_id):
@@ -204,11 +196,6 @@ class ShoppingList(BaseModel, db.Model):
              return shop_list
         return None
 
-
-    #@classmethod
-    def get_items(self):
-        items = Item.query.filter_by(list_id=self.id)
-        return items
 
     @staticmethod
     def edit_item_data(item_id, item_name, quantity, price):
@@ -219,8 +206,6 @@ class ShoppingList(BaseModel, db.Model):
             item.price = price
             return item
         return False
-        #self.items[item_name]['quantity'] = quantity
-        #self.items[item_name]['price'] = price
 
 
 class Item(BaseModel, db.Model):
@@ -236,14 +221,14 @@ class Item(BaseModel, db.Model):
 
     def __init__(self, name, price, slist, quantity=1):
          self.name = name
-         self.quantity = quantity #default
+         self.quantity = quantity 
          self.price = price
-         self.list_id = slist.id 
+         #self.list_id = slist.id 
          
     def create_in_db(self):
         db.session.add(self)
         db.session.commit()
-
+        return True
 
     def json_dump(self):
         return dict(id=self.id, 
@@ -254,12 +239,12 @@ class Item(BaseModel, db.Model):
                     list_id=self.list_id
                    )
 
-
     @classmethod
     def delete_item(cls, item_id):
         item = Item.query.get(item_id)
         db.session.delete(item)
         db.session.commit()
+        return True
 
     def edit_data(self, name, quantity, price):
         item = Item.query.get(self.id)
@@ -268,7 +253,14 @@ class Item(BaseModel, db.Model):
         item.quantity = quantity
         item.price = price
         db.session.commit()
+        return True
 
+    @classmethod
+    def get_item(cls, item_id):
+        item = cls.query.get(item_id)
+        if item:
+             return shop_list
+        return None
 
 '''
 class Item:
