@@ -1,4 +1,4 @@
-from application.models.models import *
+from .models import User, Item, ShoppingList
 import unittest
 
 

@@ -1,10 +1,8 @@
 __author__ = 'patrick'
 import os
-#path = os.path.dirname(os.path.abspath(__file__))
 
 
-#from application.models.models import db, User, ShoppingList, Item
-from models.models import db, User, ShoppingList, Item
+from .models.models import db, User, ShoppingList, Item
 from flask import Flask, render_template, request, session, url_for, redirect, jsonify, abort, make_response
 import json
 
