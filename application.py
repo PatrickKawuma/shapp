@@ -2,8 +2,7 @@ __author__ = 'patrick'
 import os
 
 
-#from .models.models import db, User, ShoppingList, Item
-from models.models import db, User, ShoppingList, Item
+from .models.models import db, User, ShoppingList, Item
 from flask import Flask, render_template, request, session, url_for, redirect, jsonify, abort, make_response
 import json
 
@@ -31,8 +30,6 @@ def login_user():
 def register():
     if request.method == "POST":
         username = request.form['username']
-        if '@' not in username:
-            return render_template('registration.html')
         password = request.form['password']
         created = User.register(username, password)
         if created:
@@ -197,10 +194,11 @@ def api_create_list():
     print("in shopping post")
     user = User.get_user('patrifire@yahoo.com')
 
-    name = request.json.get('name')
-    budget = request.json.get('budget')
-    if name is None or budget is None:
+    if not request.json:
         abort(400)
+
+    name = request.json.get('name', "")
+    budget = request.json.get('budget', "")
 
     new_list = user.create_list(name, int(budget))
     new_list.create_in_db()

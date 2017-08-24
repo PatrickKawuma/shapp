@@ -4,12 +4,9 @@
 
 How To Run
 ***
-1. Clone Repository.
-2. Create and activate virtualenv, then install requirements.
-3. Move into cloned repository and open "application.py"
-4. Setup a postgresql database according to parameters in "application.py"
-5. Run command "python application.py"
-6. Open browser and test app on specified port
+..* Clone Repository.
+..* Create and activate virtualenv, then install requirements.
+..* Move into repository and run command "python application.py" 
 
 
 
