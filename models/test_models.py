@@ -1,5 +1,5 @@
-#from .models import User, Item, ShoppingList
-from application.models import User, Item, ShoppingList
+from .models import User, Item, ShoppingList
+#from application.models import User, Item, ShoppingList
 import unittest
 
 class TddUser(unittest.TestCase):
