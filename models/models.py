@@ -108,7 +108,7 @@ class User(BaseModel, db.Model):
         session['email'] = None
 
     def create_list(self, list_name, budget):
-        return ShoppingList(list_name, budget, self.id)
+        return ShoppingList(list_name, budget, self)
 
 
     def serialize_lists(self, list_id=None):
@@ -131,6 +131,11 @@ class User(BaseModel, db.Model):
         return shopping_list.edit_item_data(**data)
 
 
+    def view_lists(self):
+        lists = ShoppingList.query.filter_by(user_id=self.id)
+        return lists
+
+
 class ShoppingList(BaseModel, db.Model):
     """Model for the shoppings table"""
     __tablename__ = 'lists'
@@ -150,7 +155,7 @@ class ShoppingList(BaseModel, db.Model):
         print(type(user))
         self.name = name
         self.budget = budget
-        self.user_id = user
+        self.user_id = user.id
 
 
     def create_in_db(self):
@@ -218,6 +223,13 @@ class ShoppingList(BaseModel, db.Model):
             return item
         return False
 
+    @classmethod
+    def delete_list(cls, list_id):
+        slist = cls.query.get(list_id)
+        db.session.delete(slist)
+        db.session.commit()
+        return True        
+
 
 class Item(BaseModel, db.Model):
     """Model for the items table"""
@@ -234,7 +246,7 @@ class Item(BaseModel, db.Model):
          self.name = name
          self.quantity = quantity 
          self.price = price
-         #self.list_id = slist.id 
+         self.list_id = slist.id 
          
     def create_in_db(self):
         db.session.add(self)
@@ -253,9 +265,11 @@ class Item(BaseModel, db.Model):
     @classmethod
     def delete_item(cls, item_id):
         item = Item.query.get(item_id)
-        db.session.delete(item)
-        db.session.commit()
-        return True
+        if item:
+            db.session.delete(item)
+            db.session.commit()
+            return True
+        return False
 
     def edit_data(self, name, quantity, price):
         item = Item.query.get(self.id)

@@ -274,7 +274,6 @@ def api_delete_item(list_id, item_id):
     slist = ShoppingList.get_list(list_id)
     if not slist:
         abort(404)
-
     response=Item.delete_item(item_id)
     return make_response(jsonify({'response': response}))
     

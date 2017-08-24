@@ -7,7 +7,7 @@ def post_list():
     '''
     ENDPOINT = "http://0.0.0.0:9050/shoppinglists"
     payload = {
-       "name" : "anniversary"
+       "name" : "25th birthday"
        "budget": 44000,
     }
     res = requests.post(ENDPOINT, data=json.dumps(payload), headers={'content-Type': 'application/json'})
