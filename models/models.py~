@@ -172,6 +172,17 @@ class ShoppingList(BaseModel, db.Model):
         items = Item.query.filter_by(list_id=self.id)
         return items
 
+    def get_item(self, item_id):
+        if item_id:
+            item = Item.query.get(item_id)
+
+
+    def delete_item(self, item_id=None):
+        if item_id:
+            Item.query.delete(item_id)
+            return "Item deleted"
+        return "404, Item not found"
+
 
     def serialize_items(self):
         items = self.get_items()
@@ -254,6 +265,13 @@ class Item(BaseModel, db.Model):
         item.price = price
         db.session.commit()
         return True
+
+    @classmethod
+    def get_item(cls, item_id):
+        item = cls.query.get(item_id)
+        if item:
+             return item
+        return None
 
 '''
 class Item:

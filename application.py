@@ -3,7 +3,7 @@ import os
 #path = os.path.dirname(os.path.abspath(__file__))
 
 
-from models.models import db, User, ShoppingList, Item #, SHOPPING_LISTS, USERS
+from application.models.models import db, User, ShoppingList, Item #, SHOPPING_LISTS, USERS
 from flask import Flask, render_template, request, session, url_for, redirect, jsonify, abort, make_response
 import json
 
@@ -150,14 +150,14 @@ lists = [
 ]
 
 @app.route('/shoppinglists', methods=['GET'])
-def get_lists():
+def api_get_lists():
     user = User.get_user('patrifire@yahoo.com')
     lists = user.serialize_lists()
     return jsonify({'lists': lists})
 
 
 @app.route('/shoppinglists/<int:list_id>', methods=['GET'])
-def get_list(list_id):
+def api_get_list(list_id):
     user = User.get_user('patrifire@yahoo.com')
     slist = user.serialize_lists(list_id)
     if slist:
@@ -166,7 +166,7 @@ def get_list(list_id):
 
 
 @app.route('/shoppinglists/<int:list_id>/items', methods=['GET'])
-def get_items(list_id):
+def api_get_items(list_id):
     print("in get items for a list")
     user = User.get_user('patrifire@yahoo.com')
     slist = ShoppingList.get_list(list_id)
@@ -176,7 +176,7 @@ def get_items(list_id):
 
 
 @app.route('/shoppinglists', methods=['POST'])
-def create_list():
+def api_create_list():
     user = User.get_user('patrifire@yahoo.com')
     if not request.json or not ('name' and 'budget') in request.json:
         abort(400)
@@ -190,9 +190,8 @@ def create_list():
 
 
 
-
 @app.route('/shoppinglists/<int:list_id>', methods=['PUT'])
-def edit_list(list_id):
+def api_put_list(list_id):
     print("in put")
     shoplist = ShoppingList.get_list(list_id)
     if len(slist) == 0:
@@ -217,15 +216,16 @@ def edit_list(list_id):
 
 
 @app.route('/shoppinglists/<int:list_id>', methods=['DELETE'])
-def delete_task(list_id):
+def api_delete_task(list_id):
     shoplist = [slist for slist in lists if slist['id'] == list_id]
     if len(slist) == 0:
         abort(404)
     lists.remove(shoplist[0])
     return jsonify({'result': True})
 
+
 @app.route('/shoppinglists/<int:list_id>/items', methods=['POST'])
-def get_items(list_id):
+def api_post_items(list_id):
     if not request.json or not ('name' and 'quantity' and 'price') in request.json:
         abort(400)
     user = User.get_user('patrifire@yahoo.com')
@@ -241,10 +241,10 @@ def get_items(list_id):
 
 
 @app.route('/shoppinglists/<int:list_id>/items/<int:item_id>', methods=['PUT'])
-def get_items(list_id, item_id):
+def api_put_items(list_id, item_id):
     if not request.json or not ('name' or 'quantity' or 'price') in request.json:
         abort(400)
-    user = User.get_user('patrifire@yahoo.com')
+    #user = User.get_user('patrifire@yahoo.com')
     slist = ShoppingList.get_list(list_id)
     if slist:
         item = Item.get_item(item_id)
@@ -263,7 +263,14 @@ def get_items(list_id, item_id):
     return make_response(jsonify({'error': 'List Not found'}), 400)
 
 
+@app.route('/shoppinglists/<int:list_id>/items/<int:item_id>', methods=['DELETE'])
+def api_delete_item(list_id, item_id):
+    slist = ShoppingList.get_list(list_id)
+    if slist:
+        response=slist.delete_item(item_id)
+        return jsonify({'response': response})
 
+        
 
 '''
 def make_public_list(slist):

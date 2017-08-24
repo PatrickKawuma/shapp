@@ -56,5 +56,12 @@ class RouteTester(unittest.TestCase):
         response = self.client.put('/lists/8')
         self.assertEquals(response[1], '404 NOT FOUND') # naturally
 
+    def test_API_delete_item(self):
+        response = self.client.delete('/lists/2/items/3')
+        self.assertEquals(response[1], '404 NOT FOUND')
+
+    
+
+
     
 

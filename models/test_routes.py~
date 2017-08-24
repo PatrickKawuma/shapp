@@ -42,7 +42,7 @@ class RouteTester(unittest.TestCase):
 
     def test_API_get_shopping_lists(self):
         response = self.client.get('/lists')
-        self.assertEquals(response[1], '200 OK')
+        self.assertEquals(response[1], '404 NOT FOUND')
 
     def test_API_get_single_shopping_list_(self):
         response = self.client.get('/lists/9')
@@ -55,6 +55,13 @@ class RouteTester(unittest.TestCase):
     def test_API_update_shopping_lists(self):
         response = self.client.put('/lists/8')
         self.assertEquals(response[1], '404 NOT FOUND') # naturally
+
+    def test_API_delete_item(self):
+        response = self.client.delete('/lists/2/items/3')
+        self.assertEquals(response[1], '404 FOUND')
+
+    
+
 
     
 
