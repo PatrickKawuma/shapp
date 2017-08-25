@@ -147,7 +147,7 @@ class ShoppingList(BaseModel, db.Model):
     created = db.Column(db.DateTime, server_default=db.func.now())
     #items = db.relationship('Item', backref='list', lazy='dynamic') ## points to the Item class
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    items = db.relationship('Item', backref='list', lazy='dynamic')
+    items = db.relationship('Item', cascade="all,delete", backref='list', lazy='dynamic')
 
 
     def __init__(self, name, budget, user): #takes arguments of list_name(str), budget(float) and a user object

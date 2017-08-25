@@ -3,6 +3,8 @@
 {% block content %}
 
 <form id="form1" method="get">
+<strong>Items in </strong>{{ list_name }} list
+<hr/>
 
 <div class="row">
 	<div class="col-xs-12">
@@ -18,8 +20,8 @@
                                                 <tr>
 <div>
 					<div class="col-sm-3">
-      <input type="text" name="searchitem" placeholder="check for item "/>&nbsp;
-      <button type="submit" value="submit" class="btn btn-success">Search</button>
+ <!--     <input type="text" name="searchitem" placeholder="check for item "/>&nbsp;
+      <button type="submit" value="submit" class="btn btn-success">Search</button>-->
  					</div>
 					<div class="col-sm-9">
 
@@ -61,6 +63,7 @@
       <input type="hidden" name="list_id" value="{{ list_id }}">
  					</div>
 					<button type="submit" value="submit" class="btn btn-primary">Add item</button>
+                                        <a href="{{ url_for('shopping_list')}}" class="pull-right"> back to lists </a>
 </form>
 
 

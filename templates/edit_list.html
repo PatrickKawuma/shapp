@@ -3,12 +3,12 @@
 {% block content %}
 
 
-<form id="form2" class="" method="put">
+<form id="form2" class="" method="post">
 
 					<div class="col-sm-3">
-      <label for="listname">List Name</label><input type="text" name="listname" placeholder="item to include... "/>&nbsp;
-      <label for="budget">Budget</label><input type="text" name="budget" placeholder="quantity"/>&nbsp;
-      <input type="hidden" name="list_id" value="">
+      <label for="listname">List Name</label><input type="text" name="listname" value="{{ shoplist.name }}" placeholder="item to include... "/>&nbsp;
+      <label for="budget">Budget</label><input type="text" name="budget" value="{{ shoplist.budget }}" placeholder="quantity"/>&nbsp;
+      <input type="hidden" name="list_id" value="{{ shoplist.id }}">
  					</div>
 					<button type="submit" value="submit" class="btn btn-primary">Update list</button>
 </form>
