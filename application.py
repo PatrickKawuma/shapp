@@ -2,8 +2,8 @@ __author__ = 'patrick'
 import os
 
 
-#from .models.models import db, User, ShoppingList, Item
-from models.models import db, User, ShoppingList, Item
+from .models.models import db, User, ShoppingList, Item
+#from models.models import db, User, ShoppingList, Item
 from flask import Flask, render_template, request, session, url_for, redirect, jsonify, abort, make_response
 import json
 
@@ -82,17 +82,32 @@ def view_list(list_id=None):
         
     items = shop_list.get_items()
     
-    search_q = request.args.getlist('searchitem')
-    if search_q:
-        items = Item.query.filter(Item.name.contains(search_q))
+    #search_q = request.args.getlist('searchitem')
+    #if search_q:
+    #    items = Item.query.filter(Item.name.contains(search_q))
 
-    return render_template('items.html', items=items, list_id=list_id)
+    return render_template('items.html', items=items, list_id=list_id, list_name=shop_list.name)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session['username'] = None
     return redirect(url_for('login_user'))
+
+@app.route('/edit_list/<int:list_id>', methods=['GET', 'POST'])
+def edit_list(list_id):
+    shoplist = ShoppingList.get_list(list_id)
+    if request.method == 'POST':
+        name = request.form.getlist('listname')[0]
+        budget = request.form.getlist('budget')[0]
+
+        shoplist.name = name
+        shoplist.budget = budget
+        shoplist.create_in_db()
+        return redirect(url_for('shopping_list'))
+
+    else:
+        return render_template('edit_list.html', shoplist=shoplist)
 
 
 @app.route('/delete_list/<list_id>')
