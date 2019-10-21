@@ -7,7 +7,7 @@ Mako==1.0.7
 MarkupSafe==1.0
 SQLAlchemy==1.1.13
 WTForms==2.1
-Werkzeug==0.12.2
+Werkzeug==0.15.3
 alembic==0.9.5
 certifi==2017.7.27.1
 chardet==3.0.4
