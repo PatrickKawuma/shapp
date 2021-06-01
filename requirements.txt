@@ -27,4 +27,4 @@ rednose==1.2.2
 requests==2.18.4
 six==1.10.0
 termstyle==0.1.11
-urllib3==1.22
+urllib3==1.26.5
